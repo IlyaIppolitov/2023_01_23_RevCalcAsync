@@ -29,30 +29,65 @@ namespace RevCalcAsync
         decimal totalIncome = 0;
         decimal totalOutcome = 0;
 
+
+        string incomeFile = @"D:\FilesToRead\income.txt";
+        string outcomeFile = @"D:\FilesToRead\outcome.txt";
+
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            
-            string incomeFile = @"D:\FilesToRead\income.txt";
-            string outcomeFile = @"D:\FilesToRead\outcome.txt";
-            //Parallel.Invoke(() => CalcTotalIncome(incomeFile), () => CalcTotalOutcome(outcomeFile));
-            totalIncome =  await CalcTotal(incomeFile);
-            totalOutcome = await CalcTotal(outcomeFile);
-            Dispatcher.Invoke(() => textBoxTotal.Text = $"Прибыль: {(totalIncome - totalOutcome).ToString()}");
+            var total = await CalcTotalAsync(incomeFile, outcomeFile);
+            Dispatcher.Invoke(() => textBoxTotal.Text = $"Прибыль: {(total.Item1 - total.Item2).ToString()}");
+        }
 
-            async Task<decimal> CalcTotal(string fileName)
+        async Task<(decimal,decimal)> CalcTotalAsync(string incomeFile, string outcomeFile)
+        {
+            decimal tempTotalIncome = 0;
+            decimal tempTotalOutncome = 0;
+            await Task.Run(() =>
             {
-                decimal tempTotal = 0;
-                await Task.Run(() =>
-                {
-                    string[] incomeLines = System.IO.File.ReadAllLines(fileName); // Read all lines сделать асинхронным
-                    foreach (string line in incomeLines)
-                    {
-                        tempTotal += decimal.Parse(line);
-                    }
-                });
-                return tempTotal;
-            }
+                Parallel.Invoke(
+                () => tempTotalIncome = CalcTotal(incomeFile),
+                () => tempTotalOutncome = CalcTotal(outcomeFile));
 
+            });
+            return (tempTotalIncome, tempTotalOutncome);
+        }
+
+        decimal CalcTotal(string fileName)
+        {
+            decimal temp = 0;
+            string[] Lines = System.IO.File.ReadAllLines(fileName); // Read all lines сделать асинхронным
+            foreach (string line in Lines)
+            {
+                temp += decimal.Parse(line);
+            }
+            return temp;
+        }
+
+        private async void buttonReadAllLynesAsync_Click(object sender, RoutedEventArgs e)
+        {
+            totalIncome = await CalcTotalAsync(incomeFile);
+            totalOutcome = await CalcTotalAsync(outcomeFile);
+            Dispatcher.Invoke(() => textBoxTotal.Text = $"Прибыль: {(totalIncome - totalOutcome).ToString()}");
+        }
+
+        async Task<decimal> CalcTotalAsync(string fileName)
+        {
+            decimal tempTotal = 0;
+            await Task.Run(async () =>
+            {
+                string[] Lines = await ReadAllLinesAsync(fileName);
+                foreach (string line in Lines)
+                {
+                    tempTotal += decimal.Parse(line);
+                }
+            });
+            return tempTotal;
+        }
+
+        public static Task<string[]> ReadAllLinesAsync(string path)
+        {
+            return ReadAllLinesAsync(path);
         }
     }
 }

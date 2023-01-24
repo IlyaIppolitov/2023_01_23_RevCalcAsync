@@ -9,6 +9,7 @@
     <Grid>
         <Button Content="Кнопка" HorizontalAlignment="Center" Margin="0,140,0,0" VerticalAlignment="Top" Width="300" Height="38" Click="Button_Click"/>
         <TextBox x:Name="textBoxTotal"  HorizontalAlignment="Center" TextWrapping="Wrap" Text="Нажми на кнопку" VerticalAlignment="Center" Width="255" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <Button x:Name="buttonReadAllLynesAsync" Content="Button" HorizontalAlignment="Center" Margin="0,265,0,0" VerticalAlignment="Top" Width="300" Height="34" Click="buttonReadAllLynesAsync_Click"/>
 
-     </Grid>
+    </Grid>
 </Window>
