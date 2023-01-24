@@ -56,7 +56,7 @@ namespace RevCalcAsync
         decimal CalcTotal(string fileName)
         {
             decimal temp = 0;
-            string[] Lines = System.IO.File.ReadAllLines(fileName); // Read all lines сделать асинхронным
+            string[] Lines = System.IO.File.ReadAllLines(fileName);
             foreach (string line in Lines)
             {
                 temp += decimal.Parse(line);
